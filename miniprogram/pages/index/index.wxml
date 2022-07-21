@@ -1,0 +1,10 @@
+<view class="container">
+  <view class="page-section-spacing">
+    <scroll-view scroll-y="true" style="height: 900rpx; width: 700rpx; background-color: aqua;">
+      <text style="white-space:pre-wrap" user-select="true">{{querytext}}</text>
+    </scroll-view>
+  </view>
+  <view>
+    <button type="primary" bindtap="on_query1_btn_click">{{query1}}</button>
+  </view>
+</view>
