@@ -4,7 +4,18 @@
       <text style="white-space:pre-wrap" user-select="true">{{querytext}}</text>
     </scroll-view>
   </view>
-  <view>
+  <view class = "container">
+    <checkbox-group bindchange="checkboxChange">
+      <checkbox value="{{value1}}" checked="{{checked1}}">{{name1}}</checkbox>
+    </checkbox-group>
+    <radio-group bindchange="radioChange">
+      <label wx:for="{{items}}" wx:key="value">
+          <radio value="{{item.value}}" checked="{{item.checked}}" />
+          {{item.name}}
+      </label>
+    </radio-group>
+  </view>
+  <view class="page-section-spacing">
     <button type="primary" bindtap="on_query1_btn_click">{{query1}}</button>
   </view>
 </view>

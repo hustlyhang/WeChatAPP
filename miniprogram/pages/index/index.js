@@ -1,32 +1,46 @@
 // index.js
-
-const {
-  SSL_OP_SSLEAY_080_CLIENT_DH_BUG
-} = require("constants")
-
 // 获取应用实例
 const app = getApp()
 
 Page({
   data: {
-    flg1: 1,
-    flg2: 1,
+    flg: 1,
+    flg1: 0,
+    flg2: 0,
     querytext: '',
     toView: 'green',
-    query1: '查询昨日经营数据',
+    query1: '查询',
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     canIUseGetUserProfile: false,
-    canIUseOpenData: wx.canIUse('open-data.type.userAvatarUrl') && wx.canIUse('open-data.type.userNickName') // 如需尝试获取用户信息可改为false
+    canIUseOpenData: wx.canIUse('open-data.type.userAvatarUrl') && wx.canIUse('open-data.type.userNickName'), // 如需尝试获取用户信息可改为false
+    value1: 'SUM',
+    name1: '月总收入',
+    checked1: false,
+    items: [{
+        value: 'FST',
+        name: '区域1',
+        checked: true
+      },
+      {
+        value: 'SED',
+        name: '区域2'
+      }
+    ]
   },
   on_query1_btn_click() {
     // 获取数据
     console.log("点击查询")
+    wx.showLoading({
+      title: '加载中',
+      mask: true
+    })
     wx.cloud.callFunction({
       name: 'getData',
       data: {
-        url:'http://47.108.248.22:8080/api/getData/'
+        url: 'http://47.108.248.22:8080/api/getData/',
+        flg: this.data.flg
       },
       success: (res) => {
         console.log(res.result)
@@ -44,7 +58,20 @@ Page({
   onLoad() {
     if (wx.getUserProfile) {
       this.setData({
-        canIUseGetUserProfile: true
+        canIUseGetUserProfile: true,
+        value1: 'SUM',
+        name1: '月总收入',
+        checked1: false,
+        items: [{
+            value: 'FST',
+            name: '区域1',
+            checked: true
+          },
+          {
+            value: 'SED',
+            name: '区域2'
+          }
+        ]
       })
     }
   },
@@ -68,5 +95,47 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
+  },
+  checkboxChange(e) {
+    console.log('checkbox发生change事件，携带value值为：', e.detail.value)
+    if (e.detail.value.length == 0 && this.data.flg2 == 0) {
+      this.data.flg1 = 0
+      this.data.flg = 1
+    } else if (e.detail.value.length == 0 && this.data.flg2 == 1) {
+      this.data.flg1 = 0
+      this.data.flg = 3
+    } else if (e.detail.value.length == 1 && this.data.flg2 == 0) {
+      this.data.flg1 = 1
+      this.data.flg = 2
+    } else if (e.detail.value.length == 1 && this.data.flg2 == 1) {
+      this.data.flg1 = 1
+      this.data.flg = 4
+    }
+    console.log("flg = " + this.data.flg + "\nflg1 = " + this.data.flg1 + "\nflg2 = " + this.data.flg2)
+  },
+  radioChange(e) {
+    console.log('radio发生change事件，携带value值为：', e.detail.value)
+    if (e.detail.value == 'FST' && this.data.flg1 == 0) {
+      this.data.flg = 1
+      this.data.flg2 = 0
+    } else if (e.detail.value == 'FST' && this.data.flg1 == 1) {
+      this.data.flg = 2
+      this.data.flg2 = 0
+    } else if (e.detail.value == 'SED' && this.data.flg1 == 0) {
+      this.data.flg = 3
+      this.data.flg2 = 1
+    } else if (e.detail.value == 'SED' && this.data.flg1 == 1) {
+      this.data.flg = 4
+      this.data.flg2 = 1
+    }
+
+    const items = this.data.items
+    for (let i = 0, len = items.length; i < len; ++i) {
+      items[i].checked = items[i].value === e.detail.value
+    }
+    this.setData({
+      items
+    })
+    console.log("flg = " + this.data.flg + "\nflg1 = " + this.data.flg1 + "\nflg2 = " + this.data.flg2)
   }
 })
